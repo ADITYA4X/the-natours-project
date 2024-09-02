@@ -30,43 +30,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Helmet middleware: Set security HTTP headers
 // app.use(helmet());
 // Further HELMET configuration for Security Policy (CSP)(from line 33-55 only to work leaflet.js mapping..different from jonas coading )
-const scriptSrcUrls = [
-  "'self'",
-  'https:',
-  'http:',
-  'blob:',
-  'https://unpkg.com/',
-  'https://tile.openstreetmap.org',
-  'https://js.stripe.com',
-  'https://m.stripe.network',
-  'https://*.cloudflare.com',
-];
+const scriptSrcUrls = ['https://unpkg.com/', 'https://tile.openstreetmap.org'];
 const styleSrcUrls = [
-  'https:',
   'https://unpkg.com/',
   'https://tile.openstreetmap.org',
   'https://fonts.googleapis.com/',
 ];
-const connectSrcUrls = [
-  "'self'",
-  "'unsafe-inline'",
-  'data:',
-  'blob:',
-  'https://*.stripe.com',
-  'https://unpkg.com',
-  'https://tile.openstreetmap.org',
-  'https://*.cloudflare.com/',
-  'https://bundle.js:*',
-  'ws://127.0.0.1:*/',
-];
+const connectSrcUrls = ['https://unpkg.com', 'https://tile.openstreetmap.org'];
 const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
-
-const workerSrcUrls = [
-  'https://unpkg.com/',
-  'https://tile.openstreetmap.org',
-  'https://js.stripe.com',
-  'https://m.stripe.network',
-];
 
 app.use(
   helmet({
@@ -77,19 +48,14 @@ app.use(
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'", 'data:', 'blob:', 'https:', 'ws:'],
-      baseUri: ["'self'"],
+      defaultSrc: [],
       connectSrc: ["'self'", ...connectSrcUrls],
       scriptSrc: ["'self'", ...scriptSrcUrls],
-      frameSrc: ["'self'", 'https://js.stripe.com'],
       styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-      workerSrc: ["'self'", 'data:', 'blob:', ...workerSrcUrls],
-      objectSrc: ["'none'"],
-      childSrc: ["'self'", 'blob:'],
+      workerSrc: ["'self'", 'blob:'],
+      objectSrc: [],
       imgSrc: ["'self'", 'blob:', 'data:', 'https:'],
-      fontSrc: ["'self'", 'https:', 'data:', ...fontSrcUrls],
-      formAction: ["'self'"],
-      upgradeInsecureRequests: [],
+      fontSrc: ["'self'", ...fontSrcUrls],
     },
   }),
 );
@@ -109,7 +75,6 @@ app.use('/api', limiter);
 
 // Body parser middleware: parse JSON request bodies-reading data from body to req.body
 app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
